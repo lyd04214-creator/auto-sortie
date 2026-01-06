@@ -5,8 +5,8 @@ from db_manager import log_action
 import time
 
 # [설정] 로고 경로
-LOGO_LIGHT_PATH = "/assets/images/logo_light.png"
-LOGO_DARK_PATH = "/assets/images/logo_dark.png"
+LOGO_LIGHT_PATH = "/assets/images/LOGO_LIGHT.png"
+LOGO_DARK_PATH = "/assets/images/LOGO_DARK.png"
 
 # [핵심] 서버 사이드 클릭 기록 저장소 (User ID별 타임스탬프 관리)
 # 예: {'20-1234': [1704421200.1, 1704421200.5, ...]}
