@@ -1,0 +1,136 @@
+{
+    "admin": {
+        "Sunchon": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Pukchang": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Taetan": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Sunan": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Onchon": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Hwangju": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Koksan": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Wonsan": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Sondok": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Uiju": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Jangjin": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Toksan": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Kwail": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Orang": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Kaechon": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Hwangsuwon": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Taechon": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Hyesan": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Samjiyon": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Kowon": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Nuchon": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        },
+        "Hyonli": {
+            "risk": "G",
+            "primary_aircraft": "MIG-29 (Fulcrum)",
+            "risk_threshold": "Manual"
+        }
+    },
+    "20-1234": {
+        "Sunchon": {
+            "risk": "R",
+            "primary_aircraft": "MiG-29, Su-25K, Su-25UBK, Su-7BMK"
+        },
+        "Sunan": {
+            "risk": "R",
+            "primary_aircraft": "Tu-134/154, Il-62/76, An-24"
+        },
+        "Hwangju": {
+            "risk": "A",
+            "primary_aircraft": "MiG-21U, MiG-21PF, J-7"
+        },
+        "Uiju": {
+            "risk": "A",
+            "primary_aircraft": "MiG-15UTI, H-5(Il-28), Mi-8"
+        },
+        "Sondok": {
+            "risk": "A",
+            "primary_aircraft": "Y-5, An-2"
+        }
+    }
+}

@@ -1,0 +1,1185 @@
+/* ==========================================================================
+   ROK-US AUTO SORTIE: Final Fixed Theme (v4.2)
+   - Live Animation Restored
+   - Dark Mode Calendar Fixed
+========================================================================== */
+
+:root {
+    /* [Light Mode] */
+    --bg-main: #f0f2f5;
+    --bg-panel: #ffffff;
+    --bg-list: #f8f9fa;
+    --bg-hover: #e9ecef;
+    
+    --text-primary: #1e272e;
+    --text-secondary: #576574;      
+    --text-inverse: #ffffff;
+
+    --border-color: #d2dae2;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+
+    --accent-red: #ff3f34;
+    --accent-blue: #0984e3;         
+    
+    --navbar-bg: #ffffff;
+    --clock-bg: #d2dae2;
+}
+
+[data-theme="dark"] {
+    /* [Dark Mode] */
+    --bg-main: #121212;
+    --bg-panel: #1e1e1e;
+    --bg-list: #2c2c2c;
+    --bg-hover: #3a3a3a;
+
+    --text-primary: #ffffff;
+    --text-secondary: #bdc3c7;
+    --text-inverse: #1e1e1e;
+
+    --border-color: #444444;
+    --shadow-color: rgba(0, 0, 0, 0.8);
+
+    --accent-red: #ff5252;
+    /* [수정] 민트색 -> 선명한 파란색 (가시성 확보) */
+    --accent-blue: #2980b9;         
+    
+    --navbar-bg: #1e1e1e;
+    --clock-bg: #2d3436;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: background 0.2s, color 0.2s;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 { color: var(--text-primary) !important; }
+.text-muted { color: var(--text-secondary) !important; }
+
+/* =========================================
+   1. Live Indicator (애니메이션 복구)
+========================================= */
+.live-indicator {
+    display: inline-block;
+    width: 10px; height: 10px;
+    background-color: var(--accent-red);
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 8px var(--accent-red);
+    vertical-align: middle;
+    animation: blinker 1.5s cubic-bezier(0.5, 0, 1, 1) infinite alternate;
+}
+
+@keyframes blinker {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0.3; transform: scale(0.9); }
+}
+
+/* =========================================
+   2. Navbar & Layout
+========================================= */
+.navbar-custom {
+    background-color: var(--navbar-bg) !important;
+    border-bottom: 1px solid var(--border-color);
+}
+.navbar-brand-text {
+    font-family: 'Black Ops One', cursive;
+    font-size: 1.8rem;
+    color: var(--text-primary) !important;
+    border-left: 4px solid var(--accent-blue);
+    padding-left: 15px;
+}
+.navbar-custom .nav-link, .navbar-custom .dropdown-toggle { 
+    color: var(--text-primary) !important; font-weight: 600;
+}
+.dropdown-menu {
+    background-color: var(--bg-panel) !important;
+    border: 1px solid var(--border-color) !important;
+}
+.dropdown-item { color: var(--text-primary) !important; }
+.dropdown-item:hover { background-color: var(--bg-hover) !important; color: var(--accent-blue) !important; }
+
+/* =========================================
+   3. List & Tabs
+========================================= */
+.list-item-custom {
+    background-color: var(--bg-list) !important;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px var(--shadow-color);
+    overflow: hidden; /* 넘치는 내용 숨김 */
+}
+
+/* 텍스트 말줄임표(...) 처리 */
+.list-item-custom h5 {
+    white-space: nowrap;      /* 줄바꿈 금지 */
+    overflow: hidden;         /* 넘치면 숨김 */
+    text-overflow: ellipsis;  /* ... 으로 표시 */
+    display: block;
+    max-width: 140px;         /* 너비 제한 */
+}
+
+.list-item-custom .d-flex > div:first-child {
+    min-width: 0; 
+    display: flex;
+    align-items: center;
+}
+.list-item-custom small {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 220px;
+}
+.list-group-item.active {
+    background-color: var(--accent-blue) !important;
+    border-color: var(--accent-blue) !important;
+    color: #000000 !important;
+}
+[data-theme="light"] .list-group-item.active { color: #ffffff !important; }
+[data-theme="dark"] .list-group-item.active { color: #000000 !important; font-weight: 800; }
+.list-group-item.active small, .list-group-item.active .text-muted {
+    color: inherit !important; opacity: 0.8;
+}
+
+.custom-tab-label {
+    color: var(--text-secondary) !important;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 4px 4px 0 0;
+}
+#tab-alert.active { 
+    background-color: rgba(255, 63, 52, 0.1);
+    color: var(--accent-red) !important; border-bottom: 3px solid var(--accent-red); 
+}
+#tab-all.active { 
+    background-color: rgba(9, 132, 227, 0.1);
+    color: var(--accent-blue) !important; border-bottom: 3px solid var(--accent-blue); 
+}
+[data-theme="dark"] #tab-all.active { background-color: rgba(0, 210, 211, 0.1); }
+
+/* =========================================
+   4. Alert Logs
+========================================= */
+.log-item {
+    display: flex; align-items: center; padding: 8px 0;
+    border-bottom: 1px solid var(--border-color); font-size: 0.9rem;
+}
+.log-time { color: var(--text-secondary); font-family: 'Share Tech Mono', monospace; min-width: 90px; }
+.log-base { color: var(--text-primary); font-weight: bold; margin-right: auto; }
+.log-diff-up { 
+    color: var(--accent-red); font-weight: bold; 
+    background: rgba(255, 63, 52, 0.1); padding: 2px 8px; border-radius: 4px;
+}
+.log-diff-down { 
+    color: var(--accent-blue); font-weight: bold; 
+    background: rgba(9, 132, 227, 0.1); padding: 2px 8px; border-radius: 4px;
+}
+[data-theme="dark"] .log-diff-down { background: rgba(0, 210, 211, 0.15); }
+
+/* =========================================
+   5. Date Picker (다크모드 하얀색 문제 해결)
+========================================= */
+
+.SingleDatePicker { width: 100%; z-index: 9999; }
+
+/* 겉을 감싸는 컨테이너 */
+.SingleDatePickerInput {
+    background: transparent !important; /* 배경 투명화 */
+    border: none !important;            /* 테두리 제거 (부모 div가 담당) */
+    display: flex;
+    align-items: center;
+    padding: 0;
+}
+
+/* [중요] 흰색 박스가 생기는 원인인 내부 컨테이너 투명화 */
+.DateInput, .DateInput_1 {
+    width: 110px;
+    background: transparent !important; /* 흰색 배경 제거 */
+    display: block;
+}
+
+/* 실제 텍스트가 입력되는 input 태그 */
+.DateInput_input, .DateInput_input_1 {
+    background: transparent !important;
+    color: var(--text-primary) !important; /* 테마 색상 (다크모드=흰색, 일반=검정) */
+    border-bottom: none !important;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer;
+}
+
+/* 달력 팝업창 스타일 (이전과 동일) */
+.SingleDatePicker_picker {
+    background-color: var(--bg-panel) !important;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    bottom: 50px !important; top: auto !important; left: 0 !important;
+    z-index: 10000 !important;
+    color: var(--text-primary) !important;
+}
+/* ... (달력 내부 스타일은 기존 유지) ... */
+
+/* 달력 내부 컨테이너들 투명화 (부모 배경 따르도록) */
+.DayPicker, .DayPicker > div, .DayPicker > div > div {
+    background-color: transparent !important; 
+}
+.CalendarMonth, .CalendarMonthGrid, .CalendarMonth_caption {
+    background-color: transparent !important;
+    color: var(--text-primary) !important;
+}
+
+/* 날짜 셀 */
+.CalendarDay { 
+    background: transparent !important; 
+    color: var(--text-primary) !important;
+    border: 1px solid rgba(128,128,128,0.1) !important;
+}
+.CalendarDay:hover { 
+    background: var(--bg-hover) !important; 
+    border: 1px solid var(--accent-blue) !important; 
+    color: var(--accent-blue) !important;
+}
+.CalendarDay__selected { 
+    background: var(--accent-blue) !important; 
+    color: #ffffff !important; /* 선택된 날짜는 무조건 흰 글씨 */
+}
+
+/* 비활성화된 날짜 */
+.CalendarDay__blocked_out_of_range {
+    background: rgba(0,0,0,0.2) !important;
+    color: var(--text-secondary) !important;
+    opacity: 0.3;
+}
+
+/* 화살표 및 요일 헤더 */
+.DayPickerNavigation_svg { fill: var(--text-primary) !important; }
+.DayPicker_weekHeader { color: var(--text-secondary) !important; }
+
+
+/* =========================================
+   6. Others (Clock, Slider, etc)
+========================================= */
+.glass-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px var(--shadow-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.digital-clock-container {
+    background: var(--clock-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.4rem;
+    padding: 5px 15px;
+    text-align: center;
+    border-radius: 4px;
+}
+.rc-slider { margin-top: -5px !important; }
+.rc-slider-mark-text { color: var(--text-secondary) !important; }
+.btn-rok-analysis {
+    background-color: var(--accent-blue);
+    color: #ffffff !important;
+    font-weight: bold; border: none;
+}
+.target-image-box {
+    width: 100%; height: 100px;
+    background: var(--bg-hover);
+    border: 2px dashed var(--border-color);
+    display: flex; align-items: center; justify-content: center;
+}
+
+/* =========================================
+   10. Login Page Specific Styles (High Visibility)
+========================================= */
+
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    
+    /* 배경 이미지 (로컬 파일 사용 권장) */
+    background-image: url('/assets/login_bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+    
+    /* 배경 숨쉬기 효과 */
+    animation: bg-breath 30s ease-in-out infinite alternate;
+}
+
+@keyframes bg-breath {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+}
+
+/* 동적 조명 + 그리드 */
+.login-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 1;
+    /* 중앙은 밝게, 외곽은 어둡게 */
+    background: radial-gradient(circle at center, rgba(9, 132, 227, 0.15) 0%, rgba(5, 10, 20, 0.9) 85%);
+    background-image: 
+        linear-gradient(rgba(9, 132, 227, 0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(9, 132, 227, 0.25) 1px, transparent 1px),
+        radial-gradient(circle at center, rgba(9, 132, 227, 0.1) 0%, rgba(5, 10, 20, 0.9) 85%);
+    background-size: 60px 60px, 60px 60px, cover;
+    animation: grid-scan 20s linear infinite;
+}
+
+@keyframes grid-scan {
+    0% { background-position: 0 0, 0 0, center; }
+    100% { background-position: 0 120px, 0 120px, center; }
+}
+
+/* 레이더 스캔 */
+.login-wrapper::after {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 150vmax; height: 150vmax;
+    background: conic-gradient(from 0deg at 50% 50%, transparent 0%, rgba(9, 132, 227, 0.15) 10%, transparent 25%);
+    transform-origin: 0 0;
+    animation: radar-sweep 25s linear infinite;
+    z-index: 2;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+}
+
+/* [핵심 수정] 로그인 카드 가독성 강화 */
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    z-index: 10;
+    padding: 40px 40px 30px 40px !important;
+    text-align: center;
+    
+    /* [수정] 배경 농도를 높여(0.55 -> 0.8) 글씨 가독성 확보 */
+    background: rgba(15, 20, 30, 0.8) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    
+    border: 1px solid rgba(9, 132, 227, 0.4) !important;
+    border-top: 4px solid var(--accent-blue) !important;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 30px rgba(9, 132, 227, 0.15) !important;
+    border-radius: 8px;
+    
+    /* [중요] 라이트 모드에서도 글씨는 무조건 흰색으로 고정 */
+    color: #ffffff !important; 
+}
+
+/* 로고 스타일 */
+.login-logo {
+    font-family: 'Black Ops One', cursive;
+    font-size: 2.8rem;
+    color: #ffffff !important;
+    letter-spacing: 3px;
+    text-shadow: 0 0 15px rgba(9, 132, 227, 0.8);
+    margin-bottom: 5px;
+}
+
+.security-badge {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    color: #ff5252; /* 네온 레드 고정 */
+    border: 1px solid #ff5252;
+    padding: 4px 12px;
+    display: inline-block;
+    margin-bottom: 30px;
+    background: rgba(255, 82, 82, 0.1);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+/* 입력창 스타일 */
+.login-input {
+    background: rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid rgba(9, 132, 227, 0.3) !important;
+    color: #ffffff !important; /* 입력 글씨 흰색 고정 */
+    padding: 12px !important;
+    margin-bottom: 15px !important;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+.login-input:focus {
+    border-color: var(--accent-blue) !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    box-shadow: 0 0 10px rgba(9, 132, 227, 0.5) !important;
+}
+.login-input::placeholder { color: rgba(255, 255, 255, 0.4) !important; }
+
+/* 보안 서약 체크박스 스타일 */
+.security-check-label {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 0.85rem;
+    text-align: left;
+}
+.form-check-input {
+    background-color: rgba(0,0,0,0.5);
+    border-color: var(--accent-blue);
+}
+.form-check-input:checked {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+
+/* 로그인 버튼 */
+.btn-login {
+    width: 100%;
+    padding: 12px !important;
+    background: linear-gradient(135deg, var(--accent-blue), #06528f) !important;
+    border: none !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.5px;
+    font-size: 1.1rem;
+    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(9, 132, 227, 0.4);
+    transition: all 0.3s ease;
+    color: #ffffff !important;
+}
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(9, 132, 227, 0.6);
+}
+
+/* =========================================
+   11. Color & Visibility Fixes (Table Update)
+========================================= */
+
+/* 유리 패널 내부 텍스트 */
+.glass-panel {
+    color: var(--text-primary) !important;
+}
+
+/* 테이블 스타일 전면 수정 */
+.table-custom {
+    color: var(--text-primary) !important;
+    background-color: transparent !important; /* 배경 투명화 */
+    --bs-table-bg: transparent !important;    /* 부트스트랩 변수 오버라이드 */
+}
+
+/* 헤더 스타일 */
+.table-custom thead th {
+    color: var(--accent-blue) !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    background-color: transparent !important;
+    font-weight: 700;
+}
+
+/* 바디 스타일 */
+.table-custom tbody td {
+    color: var(--text-primary) !important;
+    border-top: 1px solid rgba(128, 128, 128, 0.2) !important;
+    background-color: transparent !important;
+}
+
+/* 호버 효과 (모드별 분기) */
+/* 라이트 모드: 연한 파랑 */
+html[data-theme="light"] .table-custom tbody tr:hover td {
+    background-color: rgba(9, 132, 227, 0.1) !important;
+}
+/* 다크 모드: 연한 흰색/파랑 */
+html[data-theme="dark"] .table-custom tbody tr:hover td {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #ffffff !important;
+}
+
+/* =========================================
+   12. KPI Card Styles (Theme Adaptive)
+========================================= */
+
+.kpi-card {
+    /* [공통] 테두리 포인트 및 그림자 */
+    border-radius: 12px;
+    border-left: 6px solid var(--accent-blue);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* [Light Mode] 기본: 밝은 유리 패널 */
+html[data-theme="light"] .kpi-card {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    color: #333333; /* 글씨 검정 */
+}
+
+/* [Dark Mode] 다크: 어두운 그라데이션 패널 */
+html[data-theme="dark"] .kpi-card {
+    background: linear-gradient(145deg, rgba(30, 40, 50, 0.9), rgba(10, 15, 20, 0.95));
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    color: #ffffff; /* 글씨 흰색 */
+}
+
+/* 호버 효과 */
+.kpi-card:hover {
+    transform: translateY(-5px);
+}
+html[data-theme="light"] .kpi-card:hover {
+    box-shadow: 0 10px 25px rgba(9, 132, 227, 0.2);
+    border-left-color: #0984e3;
+}
+html[data-theme="dark"] .kpi-card:hover {
+    box-shadow: 0 10px 25px rgba(9, 132, 227, 0.3);
+    border-left-color: #00d2d3; /* 민트 */
+}
+
+/* 아이콘 색상 자동 적응 */
+.kpi-icon {
+    position: absolute;
+    top: 15px; 
+    right: 15px;
+    opacity: 0.2; /* 은은하게 */
+    font-size: 2.5rem;
+}
+/* 라이트 모드에선 아이콘을 검정색 기반으로, 다크에선 흰색 기반으로 */
+html[data-theme="light"] .kpi-icon { color: #000; }
+html[data-theme="dark"] .kpi-icon { color: #fff; }
+
+/* =========================================
+   13. Tooltip Customization (Theme Adaptive)
+========================================= */
+
+/* [공통] 툴팁 박스 기본 스타일 */
+.tooltip-inner {
+    font-family: 'Noto Sans KR', sans-serif !important;
+    max-width: 280px !important;   /* 너비 제한을 넓혀서 줄바꿈 자연스럽게 */
+    padding: 12px 15px !important; /* 내부 여백 확보 */
+    font-size: 0.85rem !important;
+    line-height: 1.6 !important;   /* 줄 간격 넓혀서 가독성 확보 */
+    text-align: left !important;   /* 왼쪽 정렬이 긴 글 읽기에 편함 */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* 부드러운 그림자 */
+    border-radius: 8px !important;
+}
+
+/* [Light Mode] 일반 모드: 흰색 배경 + 진한 글씨 */
+html[data-theme="light"] .tooltip-inner {
+    background-color: rgba(255, 255, 255, 0.98) !important;
+    color: #333333 !important;
+    border: 1px solid #dcdcdc !important;
+}
+
+/* [Light Mode] 말풍선 화살표 색상 맞춤 (위쪽 화살표 기준) */
+html[data-theme="light"] .bs-tooltip-top .tooltip-arrow::before,
+html[data-theme="light"] .bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before {
+    border-top-color: #dcdcdc !important; /* 테두리 색 */
+}
+html[data-theme="light"] .bs-tooltip-top .tooltip-arrow::after,
+html[data-theme="light"] .bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::after {
+    border-top-color: #ffffff !important; /* 배경 색 */
+}
+
+/* [Dark Mode] 다크 모드: 짙은 남색 배경 + 흰 글씨 */
+html[data-theme="dark"] .tooltip-inner {
+    background-color: rgba(30, 40, 50, 0.95) !important;
+    color: #ffffff !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+/* =========================================
+   14. Utility Classes (New)
+========================================= */
+.text-danger-muted {
+    color: #ff6b6b !important; /* 부드러운 빨강 */
+    font-weight: 700 !important;
+}
+
+/* 테이블 내에서 회색과 충돌 방지 */
+tr td.text-danger-muted {
+    color: #ff6b6b !important;
+}
+
+/* =========================================
+   16. DatePicker Customization (New)
+========================================= */
+
+/* 달력 입력칸 스타일 (버튼처럼 보이게) */
+.DateInput {
+    background-color: transparent !important;
+    width: 100px !important;
+}
+
+.DateInput_input {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-primary) !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    text-align: center;
+    padding: 5px !important;
+    cursor: pointer;
+}
+
+/* 기간 사이의 화살표 */
+.DateRangePickerInput_arrow_svg {
+    fill: var(--text-muted);
+}
+
+/* 달력 팝업창 (항상 최상위) */
+.DateRangePicker_picker {
+    z-index: 9999 !important;
+}
+
+/* =========================================
+   17. UI Fixes: Adaptive Colors & Layout
+   (다크/라이트 모드 완벽 대응 및 달력 가로 정렬)
+========================================= */
+
+/* [핵심] 입력창(드롭다운, 달력, 텍스트) 자동 색상 변환 */
+/* 라이트 모드: 흰 배경 + 검은 글씨 */
+html[data-theme="light"] .adaptive-style {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #cccccc !important;
+}
+/* 다크 모드: 반투명 검정 배경 + 흰 글씨 */
+html[data-theme="dark"] .adaptive-style {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* --------------------------------------------------- */
+/* [핵심] DatePicker 강제 가로 정렬 (Flexbox) */
+/* --------------------------------------------------- */
+
+/* 1. 달력 컨테이너: 아이콘과 입력창을 가로로 배치 */
+.date-picker-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 10px; /* 아이콘과 달력 사이 간격 */
+}
+
+/* 2. Dash 내부 클래스 덮어쓰기 (줄바꿈 방지) */
+.DateRangePicker {
+    width: 100% !important; 
+}
+.DateRangePickerInput {
+    background-color: transparent !important;
+    border: none !important;
+    display: flex !important; /* 내부 요소 가로 정렬 */
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+}
+
+/* 3. 날짜 입력칸 (Start/End) 스타일 */
+.DateInput {
+    background-color: transparent !important;
+    width: 45% !important; /* 너비 강제 지정 */
+}
+
+.DateInput_input {
+    font-family: 'Rajdhani', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    text-align: center !important;
+    padding: 6px 0 !important;
+    border-radius: 6px !important;
+    
+    /* 모드에 따른 색상 상속 */
+    background-color: var(--input-bg) !important; 
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+/* 라이트 모드일 때 입력칸 구체적 색상 */
+html[data-theme="light"] .DateInput_input {
+    background-color: #f8f9fa !important;
+    color: #333 !important;
+    border-color: #ddd !important;
+}
+/* 다크 모드일 때 입력칸 구체적 색상 */
+html[data-theme="dark"] .DateInput_input {
+    background-color: rgba(255,255,255,0.1) !important;
+    color: #fff !important;
+    border-color: rgba(255,255,255,0.2) !important;
+}
+
+/* 4. 화살표(→) 아이콘 정렬 */
+.DateRangePickerInput_arrow {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 10% !important;
+}
+.DateRangePickerInput_arrow_svg {
+    fill: var(--text-muted) !important; /* 화살표 색상 */
+    width: 16px;
+    height: 16px;
+}
+
+/* =========================================
+   18. Report Page Visual Fixes (Hotfix)
+========================================= */
+
+/* [수정] 보고서 종이 내부의 모든 글씨는 무조건 '검은색' (다크모드 간섭 방지) */
+#report-paper, 
+#report-paper * {
+    color: #000000 !important;
+}
+
+/* [수정] 보고서 헤더(작전 결과 보고서 생성) 색상 자동화 */
+/* 기본적으로 var(--text-primary)를 따르게 하여 모드별로 색상 반전 */
+.page-title {
+    color: var(--text-primary) !important;
+}
+
+/* [수정] 최근 분석 이력 리스트의 텍스트 색상 */
+.recent-list-text {
+    color: var(--text-primary) !important;
+}
+
+/* 라이트 모드일 때 카드 배경이 너무 투명하면 안 보이므로 조정 */
+html[data-theme="light"] .hover-card {
+    background-color: rgba(0, 0, 0, 0.05) !important; /* 연한 회색 */
+    border: 1px solid #ccc !important;
+}
+
+/* =========================================
+   19. Print & Dark Mode Final Fixes
+========================================= */
+
+/* [인쇄 설정] 화면의 다른 요소는 숨기고 보고서만 A4로 출력 */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #report-paper, #report-paper * {
+        visibility: visible;
+        color: black !important; /* 인쇄는 무조건 검은 잉크 */
+    }
+    #report-paper {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 210mm;
+        height: 297mm;
+        margin: 0;
+        padding: 20mm !important; /* 실제 종이 여백 */
+        box-shadow: none !important;
+        background-color: white !important;
+        z-index: 9999;
+    }
+    /* 인쇄 시 불필요한 스크롤바 제거 */
+    ::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* [다크모드 수정] 최근 분석 리스트 글씨 */
+html[data-theme="dark"] .recent-list-text {
+    color: #ffffff !important;
+}
+html[data-theme="light"] .recent-list-text {
+    color: #333333 !important;
+}
+
+/* [다크모드 수정] 시스템 알림(Toast) 가독성 */
+.toast-header {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-bottom: 1px solid var(--border-color);
+}
+.toast-body {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* [UI 개선] 장바구니 선택된 아이템 강조 효과 */
+.selected-card {
+    border: 2px solid var(--accent-blue) !important;
+    background-color: rgba(9, 132, 227, 0.15) !important;
+    transform: translateX(5px);
+}
+
+/* =========================================
+   20. Pagination & Status Styles
+========================================= */
+
+/* 인쇄 시 페이지 자동 넘김 설정 */
+@media print {
+    table { page-break-inside: auto; }
+    tr    { page-break-inside: avoid; page-break-after: auto; }
+    thead { display: table-header-group; }
+    tfoot { display: table-footer-group; }
+    
+    /* 보고서 컨테이너의 높이 제한 해제 (내용만큼 늘어나게) */
+    #report-paper {
+        height: auto !important;
+        min-height: 297mm;
+        overflow: visible !important;
+    }
+}
+
+/* Alert / Stable 뱃지 스타일 */
+.badge-alert {
+    background-color: #ff4757; /* 붉은색 */
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+.badge-stable {
+    background-color: #2ed573; /* 녹색 */
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+/* 리스트 아이템 스타일 */
+.detection-item {
+    border-left: 4px solid transparent;
+    transition: all 0.2s;
+}
+.detection-item:hover {
+    background-color: rgba(255,255,255,0.05);
+}
+.detection-item.status-alert {
+    border-left-color: #ff4757;
+}
+.detection-item.status-stable {
+    border-left-color: #2ed573;
+}
+
+/* =========================================
+   21. Radio Button Visibility Fix
+========================================= */
+
+/* 라디오 버튼 라벨 색상 강제 조정 (모드 적응형) */
+#status-filter label {
+    color: var(--text-primary) !important; /* 다크:흰색, 라이트:검정 */
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+/* 라디오 버튼 선택 시 강조 */
+#status-filter input:checked + label {
+    color: var(--accent-blue) !important;
+    text-decoration: underline;
+}
+
+/* =========================================
+   24. Login Checkbox Scoped Fix (Real Final)
+   (다른 페이지 체크박스 영향 없음)
+========================================= */
+
+/* [중요] .custom-checkbox 클래스가 붙은 녀석만 타겟팅합니다 */
+
+/* 1. 로그인 체크박스 컨테이너 정렬 */
+.custom-checkbox {
+    display: flex !important;
+    align-items: center !important; /* 수직 중앙 */
+    padding-left: 0 !important;     /* 불필요한 여백 제거 */
+    margin: 0 !important;
+    min-height: auto !important;
+}
+
+/* 2. 로그인 체크박스 알맹이(Input) 디자인 */
+.custom-checkbox .form-check-input {
+    width: 18px !important;
+    height: 18px !important;
+    margin-top: 0 !important;       /* 위로 쏠림 방지 */
+    margin-right: 8px !important;   /* 글자와의 간격 */
+    
+    border: 1px solid var(--accent-blue) !important;
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    border-radius: 3px !important;
+    cursor: pointer !important;
+    
+    position: relative !important;  /* 위치 초기화 */
+    top: 0 !important;
+    
+    /* 그림자/아웃라인 제거 */
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* 3. 체크되었을 때 (로그인 전용) */
+.custom-checkbox .form-check-input:checked {
+    background-color: var(--accent-blue) !important;
+    border-color: var(--accent-blue) !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e") !important;
+}
+
+/* 4. 라벨 텍스트 (로그인 전용) */
+.security-check-label {
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+    word-break: keep-all;
+    cursor: pointer;
+    margin-top: 2px; /* 시각적 미세 보정 */
+}
+
+/* =========================================
+   25. Favorite Star Icon
+========================================= */
+.star-icon {
+    cursor: pointer;
+    transition: transform 0.2s, color 0.2s;
+    font-size: 1.1rem;
+    padding: 5px; /* 클릭 영역 확보 */
+}
+
+.star-icon:hover {
+    transform: scale(1.2); /* 마우스 올리면 커짐 */
+}
+
+/* 꽉 찬 별 (즐겨찾기 됨) */
+.fa-star.text-warning {
+    color: #f1c40f !important; /* Gold Color */
+    text-shadow: 0 0 5px rgba(241, 196, 15, 0.5);
+}
+
+/* 빈 별 (즐겨찾기 안 됨) */
+.fa-star.text-muted {
+    color: #4b4b4b !important;
+}
+
+/* =========================================
+   26. Tactical Time Font & Star Fix
+========================================= */
+
+/* 시간 표시 ([16:00]) 디자인 개선 */
+.tactical-time {
+    font-family: 'Rajdhani', 'Noto Sans KR', sans-serif !important; /* 전술 폰트 우선 */
+    font-weight: 700 !important; /* 두껍게 */
+    font-size: 1.1rem !important; /* 약간 키움 */
+    color: var(--accent-blue); /* 포인트 컬러 */
+    letter-spacing: 0.5px;
+}
+
+/* 별 아이콘 클릭 영역 확대 (반응성 향상) */
+.star-touch-area {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px; /* 클릭 영역 확보 */
+    height: 35px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+.star-touch-area:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.star-touch-area:active {
+    transform: scale(0.9); /* 클릭 시 눌리는 효과 */
+}
+
+/* =========================================
+   27. DatePicker FORCE DOWN Fix (Final)
+========================================= */
+/* 달력 팝업창 위치 및 스타일 강제 지정 */
+.SingleDatePicker_picker {
+    position: absolute !important;
+    top: 50px !important;   /* 입력창 아래로 위치 고정 */
+    left: 0 !important;
+    z-index: 9999 !important; /* 최상단 레이어 */
+    margin-top: 0 !important;
+    
+    /* [핵심 수정] 배경색을 흰색으로 강제 지정하여 투명화 방지 */
+    background-color: #ffffff !important; 
+    
+    /* 디자인 */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid var(--accent-blue) !important;
+    border-radius: 5px !important;
+}
+
+/* 달력 내부 컨테이너도 흰색 확보 (이중 안전장치) */
+.DayPicker {
+    background-color: #ffffff !important; 
+}
+
+/* 달력 화살표(꼬다리) 숨김 */
+.SingleDatePickerInput_arrow {
+    display: none !important;
+}
+
+/* 폰트 색상 강제 지정 (흰 배경 위 검은 글씨) */
+.CalendarMonth_caption { color: #333 !important; }
+.DayPicker_weekHeader { color: #666 !important; }
+.CalendarDay { color: #333 !important; }
+
+/* 날짜 호버 효과 가시성 확보 */
+.CalendarDay:hover {
+    background-color: var(--accent-blue) !important;
+    color: white !important;
+}
+
+/* =========================================
+   28. Live Indicator Animation
+========================================= */
+@keyframes blinker {
+    50% { opacity: 0; }
+}
+
+.live-dot {
+    width: 12px;
+    height: 12px;
+    background-color: #ff3b30; /* Red Color */
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 10px #ff3b30;
+    animation: blinker 1.5s linear infinite; /* 깜빡임 효과 */
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+/* =========================================
+   29. DatePicker Full Width & Icon Fix
+========================================= */
+
+/* 1. 컴포넌트 전체 너비 확장 */
+.SingleDatePicker, 
+.SingleDatePickerInput, 
+.DateInput {
+    width: 100% !important;
+    display: block !important;
+}
+
+/* 2. 실제 입력창(Input) 스타일링 */
+.DateInput_input {
+    width: 100% !important;
+    text-align: center !important; /* 날짜 가운데 정렬 */
+    padding-right: 30px !important; /* 오른쪽에 아이콘 들어갈 공간 확보 */
+    padding-left: 10px !important;
+    cursor: pointer !important; /* 마우스 올리면 손가락 모양 */
+    
+    /* 기존 스타일 덮어쓰기 */
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid var(--accent-blue) !important;
+    border-radius: 4px !important;
+    color: var(--text-primary) !important;
+    font-family: 'Rajdhani', sans-serif !important;
+    font-weight: bold !important;
+    height: 38px !important; /* 높이 고정 */
+}
+
+/* 3. 입력창 포커스 시 효과 */
+.DateInput_input__focused {
+    border-color: #fff !important;
+    box-shadow: 0 0 5px rgba(255,255,255,0.5);
+}
+
+/* =========================================
+   30. Dropdown Auto-Theming Fix (Final)
+========================================= */
+
+/* 1. 드롭다운 기본 박스 (선택 전/후) */
+.Select-control {
+    /* 배경: 현재 테마의 배경색 (투명도 약간 줌) */
+    background-color: var(--bs-body-bg) !important; 
+    border: 1px solid var(--accent-blue) !important; 
+}
+
+/* 2. 선택된 텍스트 색상 */
+.Select-value-label {
+    /* 글자: 현재 테마의 기본 글자색 */
+    color: var(--bs-body-color) !important; 
+}
+
+/* 3. 플레이스홀더 (안내 문구) */
+.Select-placeholder {
+    color: var(--bs-secondary) !important; /* 부차적인 텍스트 색상 */
+    opacity: 0.7;
+}
+
+/* 4. 드롭다운 펼쳤을 때 나오는 메뉴 박스 */
+.Select-menu-outer {
+    background-color: var(--bs-body-bg) !important; 
+    border: 1px solid var(--accent-blue) !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important;
+    z-index: 9999 !important;
+}
+
+/* 5. 메뉴 아이템 (기본 상태) */
+.VirtualizedSelectOption {
+    color: var(--bs-body-color) !important;
+    background-color: var(--bs-body-bg) !important;
+    cursor: pointer;
+}
+
+/* 6. 메뉴 아이템 (마우스 올렸을 때/포커스) */
+.VirtualizedSelectFocusedOption {
+    background-color: var(--accent-blue) !important;
+    color: white !important; /* 강조될 때는 흰색 고정 */
+}
+
+/* 7. 입력 커서 */
+.Select-input > input {
+    color: var(--bs-body-color) !important;
+}
+
+/* 8. X 버튼 및 화살표 아이콘 색상 */
+.Select-clear-zone,
+.Select-arrow-zone {
+    color: var(--bs-body-color) !important;
+}
+
+/* =========================================
+   31. Report Paper Force Real-World Style
+========================================= */
+
+/* 1. A4 용지 배경 및 기본 글자색 고정 (테마 무시) */
+.report-page-sheet {
+    background-color: #ffffff !important; /* 무조건 흰 종이 */
+    color: #000000 !important;            /* 무조건 검은 글씨 */
+}
+
+/* 2. 제목(H2, H4), 본문(P), 각종 컨테이너 강제 흑색 */
+.report-page-sheet h2,
+.report-page-sheet h4,
+.report-page-sheet p,
+.report-page-sheet div,
+.report-page-sheet span {
+    color: #000000 !important;
+}
+
+/* 3. 테이블 테두리 및 셀 글씨 강제 흑색 (부트스트랩 다크 테이블 무력화) */
+.report-page-sheet table,
+.report-page-sheet thead,
+.report-page-sheet tbody,
+.report-page-sheet tr,
+.report-page-sheet th,
+.report-page-sheet td {
+    color: #000000 !important;
+    border-color: #000000 !important; /* 테두리도 검은색 */
+    background-color: transparent !important; /* 셀 배경 투명 */
+}
+
+/* 4. 테이블 헤더 배경 (연한 회색) */
+.report-page-sheet thead th {
+    background-color: #f8f9fa !important; /* Light Gray */
+}
+
+/* 5. 예외: 상태값(ALERT/STABLE) 색상은 유지하되, 흰 종이용 진한 색으로 변경 */
+.report-page-sheet .text-danger {
+    color: #dc3545 !important; /* 진한 빨강 (인쇄용) */
+}
+.report-page-sheet .text-success {
+    color: #198754 !important; /* 진한 초록 (인쇄용) */
+}
