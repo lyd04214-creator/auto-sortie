@@ -21,7 +21,17 @@ app = dash.Dash(
         "https://use.fontawesome.com/releases/v6.4.2/css/all.css"
     ],
     suppress_callback_exceptions=True,
-    title="ROKAF Auto Sortie"
+    title="ROKAF Auto Sortie",
+
+    content_security_policy={
+        "default-src": ["'self'"],
+        # 1. S3 이미지(amazonaws.com) 허용, 데이터 URI(data:) 허용
+        "img-src": ["'self'", "data:", "blob:", "https://*.amazonaws.com"],
+        "script-src": ["'self'", "'unsafe-inline'"],
+        # 2. 구글 폰트 및 외부 CSS 허용 (이거 안 하면 디자인 깨짐)
+        "style-src": ["'self'", "'unsafe-inline'", "https://*"],
+        "font-src": ["'self'", "data:", "https://*"]
+    }
 )
 server = app.server
 
