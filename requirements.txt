@@ -13,3 +13,5 @@ scikit-learn==1.6.1
 python-dotenv==1.1.0
 s3fs==2025.3.2
 gunicorn
+fpdf2
+openpyxl
