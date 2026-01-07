@@ -43,6 +43,7 @@ def fetch_live_scenarios():
     [오늘(시나리오) 데이터 조회]
     핵심: DB에 저장된 날짜를 무시하고, 무조건 today_str 날짜로 덮어씌움.
     """
+    today_str = datetime.now().strftime('%Y-%m-%d')
     try:
         # [핵심 SQL] TIMESTAMP(CONCAT(...))를 사용하여 날짜를 강제 변경
         sql = f"""
@@ -71,11 +72,17 @@ def fetch_live_scenarios():
 def fetch_past_history_range(hours=72):
     """
     [우측 로그용 과거 데이터 조회]
-    '오늘' 이전의 진짜 과거 이력들만 가져옴
+    수정사항: Python 레벨의 '72시간 제한' 필터링을 제거하여, 
+    데이터가 띄엄띄엄 있어도 SQL이 가져온 최근 1000개를 무조건 보여줌.
     """
+    # 1. 현재 서버 날짜 가져오기 (예: 2026-01-07)
+    today_str = datetime.now().strftime('%Y-%m-%d')
+    
     try:
+        # 오늘 자정(00:00:00)을 기준으로 설정
         cutoff_str = f"{today_str} 00:00:00"
         
+        # 2. SQL: 오늘 이전의 데이터만 가져와라 (미래 데이터인 1월 8일~12일 등은 제외됨)
         sql = f"""
             SELECT 
                 s.*, 
@@ -91,19 +98,12 @@ def fetch_past_history_range(hours=72):
         df = run_query(sql)
         
         if not df.empty:
-            # Python 레벨에서 시간 필터링
-            df['dt'] = pd.to_datetime(df['timestamp'])
-            end_dt = datetime.strptime(cutoff_str, "%Y-%m-%d %H:%M:%S")
-            start_dt = end_dt - pd.Timedelta(hours=hours)
-            
-            df = df[(df['dt'] >= start_dt) & (df['dt'] < end_dt)]
-            
-            # 수량 합산
             cols = ['cnt_fighter', 'cnt_bomber', 'cnt_transport', 'cnt_civil', 'cnt_trainer']
             df[cols] = df[cols].apply(pd.to_numeric, errors='coerce').fillna(0)
             df['total_count'] = df[cols].sum(axis=1).astype(int)
             
             return df.to_dict('records')
+            
         return []
 
     except Exception as e:

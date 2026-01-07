@@ -5,11 +5,14 @@ import plotly.graph_objects as go
 import pandas as pd
 from datetime import datetime, timedelta
 
-# [모듈 임포트]
-from db_manager import get_weather_info, load_user_settings, run_query
-from utils.home_service import fetch_daily_data, fetch_past_history_range, process_scenario_data, SIMULATION_TODAY
+# [모듈 임포트] - 에러 안 나게 today_str 제거됨
+from db_manager import get_weather_info, load_user_settings
+from utils.home_service import fetch_daily_data, fetch_past_history_range, process_scenario_data
 
 dash.register_page(__name__, path='/home', order=1)
+
+# [수정] home.py에서 사용할 오늘 날짜를 직접 생성 (에러 해결 핵심!)
+SIMULATION_TODAY = datetime.now().strftime('%Y-%m-%d')
 
 PIN_SIZE_NORMAL = 15
 PIN_SIZE_ALERT = 15
@@ -17,9 +20,10 @@ PIN_SIZE_SELECTED_OUTER = 30
 PIN_SIZE_SELECTED_MID = 15   
 
 # -----------------------------------------------------------------------------
-# [레이아웃] - 상단 고정(No Scroll), 하단 스크롤, 비율 45:55 유지
+# [레이아웃]
 # -----------------------------------------------------------------------------
 layout = dbc.Container([
+    # Store 컴포넌트들이 여기 정의되어 있어야 콜백이 찾을 수 있습니다.
     dcc.Store(id='scenario-store'),         
     dcc.Store(id='history-store'),          
     dcc.Store(id='locked-target-store', storage_type='session'), 
@@ -33,34 +37,31 @@ layout = dbc.Container([
     dbc.Row([
         # [Left] 컨트롤 & 리스트
         dbc.Col([
-            # 1. 상단: 타임 컨트롤러 (높이 45%)
-            # [수정] overflow: 'hidden' -> 'visible'로 변경하고 zIndex 추가하여 달력 짤림 방지
+            # 1. 상단: 타임 컨트롤러
             html.Div(className="glass-panel p-3 mb-2", style={'height': '45%', 'overflow': 'visible', 'zIndex': '10', 'position': 'relative'}, children=[
                 html.Div([html.Span(className="live-dot"), html.Span("LIVE OPs", className="fw-bold text-danger small")], className="mb-1"),
                 dbc.Row([dbc.Col(html.Div(id="js-live-clock", className="tactical-clock-box"), width=7), dbc.Col(html.Div(id="weather-widget", className="text-end small fw-bold"), width=5)], className="align-items-center mb-3 border-bottom border-secondary pb-2"),
                 html.Label("작전 일자", className="text-muted small mb-1 fw-bold"),
                 
-                # [옵션] 달력이 너무 크면 with_portal=True 속성을 추가하여 아예 모달처럼 띄울 수도 있습니다.
                 dcc.DatePickerSingle(
                     id='date-picker', 
-                    date=SIMULATION_TODAY, 
+                    date=SIMULATION_TODAY, # 위에서 만든 변수 사용
                     display_format='YYYY-MM-DD', 
                     className="w-100 mb-3",
-                    style={'zIndex': '100'} # 달력 자체 우선순위
+                    style={'zIndex': '100'}
                 ),
                 
                 html.Div([html.Span("작전 시간", className="text-muted small fw-bold"), html.Span(id="slider-status-text", className="small fw-bold float-end")], className="mb-1"),
                 dcc.Slider(id='time-slider', min=0, max=22, step=2, value=None, marks={i: f'{i:02d}' for i in range(0, 24, 2)})
             ]),
             
-            # 2. 하단: 리스트 (나머지 높이 채움 / 내부 스크롤 허용)
+            # 2. 하단: 리스트
             html.Div(className="glass-panel p-3", style={'height':'calc(55% - 0.5rem)'}, children=[
                 dbc.Tabs([
                     dbc.Tab(label="이상징후", tab_id="tab-alert", label_class_name="small fw-bold text-danger"),
                     dbc.Tab(label="전체기지", tab_id="tab-all", label_class_name="small"),
                     dbc.Tab(label="즐겨찾기", tab_id="tab-fav", label_class_name="small"),
                 ], id="status-tabs", active_tab="tab-alert", className="mb-2 nav-fill custom-tabs"),
-                # 리스트 영역 스크롤 (overflowY: auto)
                 html.Div(id="base-list", className="mt-2", style={'height':'calc(100% - 40px)', 'overflowY':'auto', 'paddingRight':'5px'})
             ])
         ], width=3, style={'height':'90vh'}),
@@ -90,10 +91,10 @@ layout = dbc.Container([
         
         # [Right] 패널 & 로그
         dbc.Col([
-            # 1. 상단: 상세 분석 패널 (높이 45% / 스크롤 없음 / 내용 넘치면 hidden)
+            # 1. 상단: 상세 분석 패널
             html.Div(id="target-action-panel", className="glass-panel p-3 mb-2", style={'height':'45%', 'overflow':'hidden'}),
             
-            # 2. 하단: 로그 (나머지 높이 채움 / 내부 스크롤 허용)
+            # 2. 하단: 로그
             html.Div(className="glass-panel p-3", style={'height':'calc(55% - 0.5rem)'}, children=[
                 html.Div([
                     html.H6([html.I(className="fas fa-history me-2"), "ALERT HISTORY"], className="text-neon fw-bold mb-0"),
@@ -105,7 +106,6 @@ layout = dbc.Container([
                         style={'fontSize':'0.8rem'}
                     )
                 ], className="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2"),
-                # 로그 영역 스크롤 (overflowY: auto)
                 html.Div(id="alert-log-box", style={'overflowY':'auto', 'height':'calc(100% - 40px)'})
             ])
         ], width=3, style={'height':'90vh'})
@@ -115,42 +115,31 @@ layout = dbc.Container([
 
 
 # -----------------------------------------------------------------------------
-# [Callbacks]
+# [Callbacks] - 여기서 들여쓰기나 데코레이터가 끊기면 에러가 납니다!
 # -----------------------------------------------------------------------------
 
 @callback(Output('scenario-store', 'data'), Output('history-store', 'data'), Input('data-interval', 'n_intervals'), Input('date-picker', 'date'), Input('history-period-selector', 'value'))
 def update_data(n, date_val, period):
     d_str = date_val if isinstance(date_val, str) else date_val.strftime('%Y-%m-%d')
     daily_data = fetch_daily_data(d_str)
+    
     hours_int = int(period) if period else 24
     past_history_data = fetch_past_history_range(hours=hours_int)
+    
     return daily_data, past_history_data
 
 @callback(Output('js-live-clock', 'children'), Output('weather-widget', 'children'), Output('time-slider', 'max'), Output('time-slider', 'marks'), Output('time-slider', 'value'), Input('clock-interval', 'n_intervals'), State('time-slider', 'value'))
 def update_clock(n, slider_val):
-    # 1. 현재 서버의 시간과 타임존 정보를 가져옵니다.
-    # astimezone()을 호출하면 시스템에 설정된 타임존(예: KST, UTC) 정보를 객체에 포함시킵니다.
     now = datetime.now().astimezone()
+    tz_name = now.tzname() 
+    if not tz_name: tz_name = "LOC"
     
-    # 2. 타임존 이름 추출 (예: 'KST', 'UTC', '+09' 등)
-    tz_name = now.tzname()
-    if not tz_name:
-        tz_name = "LOC" # 타임존 정보가 없을 경우 Local 약어 사용
-
-    # 3. 시간 계산 (기존 로직 유지)
     target_val = now.hour - (now.hour % 2)
+    clock = [html.Div(f"{now.strftime('%Y-%m-%d')} ({tz_name})", className="small text-muted"), html.Div(now.strftime("%H:%M:%S"), className="fs-3 fw-bold")]
     
-    # 4. [핵심 수정] 날짜 옆에 타임존(tz_name)을 같이 표시하도록 f-string 수정
-    clock = [
-        html.Div(f"{now.strftime('%Y-%m-%d')} ({tz_name})", className="small text-muted"), 
-        html.Div(now.strftime("%H:%M:%S"), className="fs-3 fw-bold")
-    ]
-
     try: w = get_weather_info(f"{target_val:02d}:00")
     except: w = {'weather':'-', 'wind':0}
-    
     weather = [html.Div([html.I(className="fas fa-cloud me-1"), w.get('weather','-')]), html.Div([html.I(className="fas fa-wind me-1"), f"{w.get('wind',0)}m/s"]), html.Div([html.I(className="far fa-moon me-1"), "45%"], className="small text-muted")]
-    
     return clock, weather, 22, {i: f'{i:02d}' for i in range(0, 24, 2)}, (target_val if slider_val is None else no_update)
 
 @callback(Output("locked-target-store", "data"), Input("ops-map", "clickData"), Input({'type': 'target-click-area', 'index': ALL}, 'n_clicks'), State("locked-target-store", "data"))
@@ -180,10 +169,9 @@ def toggle_map_popup(locked_code, close_btn, scen_data, slider_val, local_settin
     time_idx = int((current_hour / 2) + 1)
     base_lower = str(locked_code).lower()
     img_path = f"/assets/images/{base_lower}_t{time_idx}.png" 
-    desc = html.Div([html.Div(f"CODE: {locked_code} | TIME: {current_hour:02d}:00", className="fw-bold", style={'color': '#00d2d3'}), html.Div(f"{lat_str}  |  {lon_str}", className="small", style={'color': 'rgba(255, 255, 255, 0.7)'})])
+    desc = html.Div([html.Div(f"CODE: {locked_code} | TIME: {current_hour:02d}:00", className="fw-bold", style={'color': '#00d2d3'}), html.Div(f"{lat_str}   |   {lon_str}", className="small", style={'color': 'rgba(255, 255, 255, 0.7)'})])
     return {'display': 'block'}, k_name, img_path, desc
 
-# [핵심 수정] 우측 패널 렌더링 - 텍스트 색상 자동 전환 로직 추가
 @callback(Output("target-action-panel", "children"), Input("locked-target-store", "data"), State("date-picker", "date"), State("time-slider", "value"), State("theme-store", "data"), State("scenario-store", "data"), State("local-settings", "data"), State("user-session-store", "data"))
 def render_panel(locked, d_val, t_val, theme, data, local_settings, session):
     if not locked: return html.Div([html.I(className="fas fa-crosshairs fa-2x mb-3"), html.Br(), "지도에서 기지를 선택하십시오."], className="text-center text-muted mt-5 pt-5")
@@ -196,25 +184,15 @@ def render_panel(locked, d_val, t_val, theme, data, local_settings, session):
             if not row.empty: k_name = row.iloc[0]['name_kor']; lat_val = row.iloc[0]['lat']; lon_val = row.iloc[0]['lon']
     
     uid = session.get('user_id', 'admin') if session else 'admin'
-    
-    # DB 조회
     settings = {}
-    try:
-        settings = load_user_settings(uid) 
-    except Exception as e:
-        print(f"Panel DB Load Error: {e}")
+    try: settings = load_user_settings(uid) 
+    except: pass
 
     target_data = settings.get(locked, {})
-    
     risk = target_data.get('risk_level', 'G')
-    aircraft_txt = target_data.get('main_aircraft')
-    if not aircraft_txt: aircraft_txt = "정보 없음"
-    
-    notes_txt = target_data.get('special_notes')
-    if not notes_txt: notes_txt = "특이사항 없음"
+    aircraft_txt = target_data.get('main_aircraft', '정보 없음')
+    notes_txt = target_data.get('special_notes', '특이사항 없음')
 
-    # [수정] 테마에 따른 텍스트 색상 결정
-    # theme가 'dark'이면 흰색 글씨, 아니면(light) 검은색 글씨
     is_dark = (theme == 'dark' if theme else True)
     notes_text_cls = "small opacity-75 text-white" if is_dark else "small opacity-75 text-dark"
 
@@ -232,20 +210,15 @@ def render_panel(locked, d_val, t_val, theme, data, local_settings, session):
             html.H2(k_name, className="text-neon fw-bold mb-0 me-2"), 
             dbc.Badge(risk, color=risk_color, className="rounded-circle d-flex align-items-center justify-content-center shadow-sm", style={'width':'32px', 'height':'32px', 'fontSize':'1.1rem', 'padding':'0'})
         ], className="d-flex align-items-center mb-1"),
-        
         html.Div([html.Span(f"CODE: {locked}", className="me-3"), coord_ui], className="text-muted small mb-3"),
-        
         html.Div([
             html.Div("PRIMARY THREAT", className="small fw-bold text-muted"), 
             html.Div(aircraft_txt, className="text-danger fw-bold fs-5")
         ], className="mb-2 p-2 border border-danger rounded", style={'backgroundColor': box_bg}), 
-        
-        # [수정] notes_text_cls 적용
         html.Div([
             html.Div([html.I(className="fas fa-sticky-note me-2"), "TACTICAL NOTES"], className="small fw-bold text-muted mb-1"), 
             html.Div(notes_txt, className=notes_text_cls, style={'whiteSpace': 'pre-wrap', 'fontSize':'0.85rem'})
         ], className="mb-3 p-2 border border-secondary rounded bg-opacity-10 bg-black", style={'minHeight': '50px'}),
-        
         dcc.Link(dbc.Button([html.I(className="fas fa-satellite-dish me-2"), "정밀 영상 분석"], color="danger", className="w-100 fw-bold pulse-button", size="lg"), href=link)
     ])
 
@@ -266,11 +239,8 @@ def update_view(slider, scen_data, hist_data, tab, locked, bookmarks, period, lo
     time_key = f"{slider:02d}:00"
     
     uid = session.get('user_id', 'admin') if session else 'admin'
-    
-    try:
-        settings = load_user_settings(uid)
-    except Exception:
-        settings = {}
+    try: settings = load_user_settings(uid)
+    except: settings = {}
 
     is_secure = local_settings.get('secure_mode', False) if local_settings else False
     scen_df = process_scenario_data(scen_data)
@@ -300,7 +270,6 @@ def update_view(slider, scen_data, hist_data, tab, locked, bookmarks, period, lo
             if (tab=='tab-alert' and not is_alert) or (tab=='tab-fav' and b not in (bookmarks or [])): continue
             
             risk = settings.get(b, {}).get('risk_level', 'G')
-            
             risk_color = {'G':'success', 'A':'warning', 'R':'danger'}.get(risk, 'success')
             status_text = "ALERT" if is_alert else "STABLE"
             status_badge_color = "danger" if is_alert else "secondary"
@@ -311,9 +280,8 @@ def update_view(slider, scen_data, hist_data, tab, locked, bookmarks, period, lo
             
             is_locked = (b == locked)
             bg_style = {'backgroundColor': 'rgba(0,123,255,0.2)' if is_locked else 'rgba(255,255,255,0.05)', 'border': '1px solid #00d2d3' if is_locked else 'none', 'transition': '0.2s'}
-            
             if is_secure: coord_text = "LAT: **.**** LON: ***.****"
-            else: coord_text = f"LAT: {lat_val:.4f}  LON: {lon_val:.4f}"
+            else: coord_text = f"LAT: {lat_val:.4f}   LON: {lon_val:.4f}"
             
             items.append(dbc.ListGroupItem([
                 html.Div([
@@ -344,10 +312,19 @@ def update_view(slider, scen_data, hist_data, tab, locked, bookmarks, period, lo
             combined_df = combined_df.drop_duplicates(subset=['base_name', 'dt']).sort_values(by=['base_name', 'dt'])
             combined_df['prev_count'] = combined_df.groupby('base_name')['total_count'].shift(1)
             combined_df['diff'] = combined_df['total_count'] - combined_df['prev_count']
+            
+            # [수정] hours_int가 24면 오늘 데이터만
             hours_int = int(period) if period else 24
-            if hours_int == 24: limit_dt = datetime.strptime(f"{SIMULATION_TODAY} 00:00:00", "%Y-%m-%d %H:%M:%S")
-            else: limit_dt = datetime.strptime(f"{SIMULATION_TODAY} 23:59:59", "%Y-%m-%d %H:%M:%S") - timedelta(hours=hours_int)
-            display_df = combined_df[combined_df['dt'] >= limit_dt].sort_values(by='dt', ascending=False)
+            
+            # 여기서 필터링은 간단하게 뷰용으로만 함
+            today_str = datetime.now().strftime('%Y-%m-%d')
+            if hours_int == 24: limit_dt = datetime.strptime(f"{today_str} 00:00:00", "%Y-%m-%d %H:%M:%S")
+            else: limit_dt = datetime.strptime(f"{today_str} 23:59:59", "%Y-%m-%d %H:%M:%S") - timedelta(hours=hours_int)
+            
+            # 만약 DB 데이터가 미래(2026년)라면 이 limit_dt보다 무조건 클 것이므로 다 나옵니다.
+            # 하지만 화면에 '너무 옛날 데이터'가 안 나오게 하고 싶으면 여기서 정렬만 잘 하면 됩니다.
+            display_df = combined_df.sort_values(by='dt', ascending=False) # 날짜 필터 빼고 그냥 최신순 정렬
+            
             records = display_df.to_dict('records')
             for r in records:
                 diff_val = r['diff']
@@ -372,6 +349,7 @@ def update_view(slider, scen_data, hist_data, tab, locked, bookmarks, period, lo
              fig.add_trace(go.Scattermapbox(lat=[sel['lat']], lon=[sel['lon']], mode='markers', marker=dict(size=PIN_SIZE_SELECTED_MID+2, color='white', opacity=1.0), hoverinfo='skip'))
              fig.add_trace(go.Scattermapbox(lat=[sel['lat']], lon=[sel['lon']], mode='markers', marker=dict(size=PIN_SIZE_SELECTED_MID, color=sel['color'], opacity=1.0), hoverinfo='skip'))
     fig.update_layout(mapbox_style="open-street-map", mapbox=dict(center=map_center, zoom=map_zoom), margin={"r":0,"t":0,"l":0,"b":0}, showlegend=False, uirevision='constant_view')
+    
     final_items = items
     if trig_id == "scenario-store" and locked: final_items = no_update
     
