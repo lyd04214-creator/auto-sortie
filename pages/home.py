@@ -128,12 +128,29 @@ def update_data(n, date_val, period):
 
 @callback(Output('js-live-clock', 'children'), Output('weather-widget', 'children'), Output('time-slider', 'max'), Output('time-slider', 'marks'), Output('time-slider', 'value'), Input('clock-interval', 'n_intervals'), State('time-slider', 'value'))
 def update_clock(n, slider_val):
-    now = datetime.now()
+    # 1. 현재 서버의 시간과 타임존 정보를 가져옵니다.
+    # astimezone()을 호출하면 시스템에 설정된 타임존(예: KST, UTC) 정보를 객체에 포함시킵니다.
+    now = datetime.now().astimezone()
+    
+    # 2. 타임존 이름 추출 (예: 'KST', 'UTC', '+09' 등)
+    tz_name = now.tzname()
+    if not tz_name:
+        tz_name = "LOC" # 타임존 정보가 없을 경우 Local 약어 사용
+
+    # 3. 시간 계산 (기존 로직 유지)
     target_val = now.hour - (now.hour % 2)
-    clock = [html.Div(now.strftime("%Y-%m-%d"), className="small text-muted"), html.Div(now.strftime("%H:%M:%S"), className="fs-3 fw-bold")]
+    
+    # 4. [핵심 수정] 날짜 옆에 타임존(tz_name)을 같이 표시하도록 f-string 수정
+    clock = [
+        html.Div(f"{now.strftime('%Y-%m-%d')} ({tz_name})", className="small text-muted"), 
+        html.Div(now.strftime("%H:%M:%S"), className="fs-3 fw-bold")
+    ]
+
     try: w = get_weather_info(f"{target_val:02d}:00")
     except: w = {'weather':'-', 'wind':0}
+    
     weather = [html.Div([html.I(className="fas fa-cloud me-1"), w.get('weather','-')]), html.Div([html.I(className="fas fa-wind me-1"), f"{w.get('wind',0)}m/s"]), html.Div([html.I(className="far fa-moon me-1"), "45%"], className="small text-muted")]
+    
     return clock, weather, 22, {i: f'{i:02d}' for i in range(0, 24, 2)}, (target_val if slider_val is None else no_update)
 
 @callback(Output("locked-target-store", "data"), Input("ops-map", "clickData"), Input({'type': 'target-click-area', 'index': ALL}, 'n_clicks'), State("locked-target-store", "data"))

@@ -5,8 +5,8 @@ from db_manager import log_action
 import time
 
 # [설정] 로고 경로
-LOGO_LIGHT_PATH = "/assets/images/logo_light.png"
-LOGO_DARK_PATH = "/assets/images/logo_dark.png"
+LOGO_LIGHT_PATH = "/assets/images/LOGO_LIGHT.png"
+LOGO_DARK_PATH = "/assets/images/LOGO_DARK.png"
 
 # [핵심] 서버 사이드 클릭 기록 저장소 (User ID별 타임스탬프 관리)
 # 예: {'20-1234': [1704421200.1, 1704421200.5, ...]}
@@ -21,7 +21,24 @@ app = dash.Dash(
         "https://use.fontawesome.com/releases/v6.4.2/css/all.css"
     ],
     suppress_callback_exceptions=True,
-    title="ROKAF Auto Sortie"
+    title="ROKAF Auto Sortie",
+
+    meta_tags=[
+        {
+            "http-equiv": "Content-Security-Policy",
+            "content": (
+                "default-src 'self'; "
+                "img-src 'self' data: blob: https://*; "
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*; "
+                "style-src 'self' 'unsafe-inline' https://*; "
+                "font-src 'self' data: https://*; "
+                "connect-src 'self' https://*; "
+                "worker-src 'self' blob:; "  
+                "child-src 'self' blob:;"    
+            )
+        },
+        {"name": "viewport", "content": "width=device-width, initial-scale=1"}
+    ]
 )
 server = app.server
 
