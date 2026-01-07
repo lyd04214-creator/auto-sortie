@@ -5,15 +5,15 @@ from db_manager import run_query
 # ---------------------------------------------------------
 # [설정] 시스템이 인식하는 '오늘' (매일매일 여기가 '오늘'이 됩니다)
 # ---------------------------------------------------------
-SIMULATION_TODAY = '2026-01-02'
 
 def fetch_daily_data(target_date_str):
+    today_str = datetime.now().strftime('%Y-%m-%d')
     """
     [날짜별 데이터 조회 분기]
     - 오늘 날짜 요청 시 -> fetch_live_scenarios (날짜 변조해서 가져옴)
     - 과거 날짜 요청 시 -> fetch_past_history (그냥 있는 그대로 가져옴)
     """
-    if target_date_str == SIMULATION_TODAY:
+    if target_date_str == today_str:
         return fetch_live_scenarios()
     else:
         # 특정 과거 날짜의 이력 조회
@@ -41,7 +41,7 @@ def fetch_daily_data(target_date_str):
 def fetch_live_scenarios():
     """
     [오늘(시나리오) 데이터 조회]
-    핵심: DB에 저장된 날짜를 무시하고, 무조건 SIMULATION_TODAY 날짜로 덮어씌움.
+    핵심: DB에 저장된 날짜를 무시하고, 무조건 today_str 날짜로 덮어씌움.
     """
     try:
         # [핵심 SQL] TIMESTAMP(CONCAT(...))를 사용하여 날짜를 강제 변경
@@ -50,7 +50,7 @@ def fetch_live_scenarios():
                 s.data_id, s.scene_id, s.status, 
                 s.cnt_fighter, s.cnt_bomber, s.cnt_transport, s.cnt_civil, s.cnt_trainer,
                 s.data_type, s.weather, s.wind_speed, s.moon_phase,
-                TIMESTAMP(CONCAT('{SIMULATION_TODAY} ', TIME(s.timestamp))) as timestamp,
+                TIMESTAMP(CONCAT('{today_str} ', TIME(s.timestamp))) as timestamp,
                 c.scene_name as base_name, 
                 c.name_kor, 
                 c.lat, 
@@ -74,7 +74,7 @@ def fetch_past_history_range(hours=72):
     '오늘' 이전의 진짜 과거 이력들만 가져옴
     """
     try:
-        cutoff_str = f"{SIMULATION_TODAY} 00:00:00"
+        cutoff_str = f"{today_str} 00:00:00"
         
         sql = f"""
             SELECT 
